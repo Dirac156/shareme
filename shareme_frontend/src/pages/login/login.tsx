@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {gapi} from 'gapi-script';
+import { client } from '../../services/sanity.client';
 import GoogleLogin from 'react-google-login'
 import { FcGoogle } from "react-icons/fc";
 import assets from '../../assets/index';
 import config from '../../config';
+import { IdentifiedSanityDocumentStub } from '@sanity/client';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,16 +26,20 @@ const Login = () => {
 
     const { name, googleId, imageUrl } = response.profileObj;
 
-    const doc = {
+    const doc: IdentifiedSanityDocumentStub = {
       _id: googleId,
+      _type: 'user',
       type: 'user',
-      userName: name,
+      username: name,
       image: imageUrl
     }
 
-    console.log(doc)
-
-    navigate("/");
+    client.createIfNotExists(doc)
+      .then(() => {
+        navigate("/", { replace: true });
+      }).catch((err) => {
+        console.log(err)
+      })
   }
 
   return (
