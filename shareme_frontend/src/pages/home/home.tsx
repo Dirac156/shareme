@@ -9,6 +9,7 @@ import {
   UserProfile
 } from "../../components/index";
 import assets from '../../assets';
+import { fetchUser } from '../../utils/fetchUser';
 
 const { logo } = assets;
 
@@ -16,10 +17,8 @@ const Home = () => {
   const scrollRef = useRef<any>();
   const [toggleSideBar, setToggleSideBar] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const userInfo = 
-    localStorage.getItem('user') !== 'undefined' ? 
-      JSON.parse(localStorage.getItem('user') as string) : 
-      localStorage.clear();
+
+  const userInfo = fetchUser();
 
   useEffect(()=> {
     const query = userQuery(userInfo?.googleId);
@@ -35,7 +34,7 @@ const Home = () => {
   useEffect(() => {
     scrollRef?.current?.scrollTo(0, 0);
   }, [])
-  console.log(user)
+
   return (
     <div className='flex bg-gray-50 md:flex-row flex-col h-screen transition-height duration-75 ease-out'>
       <div className='hidden md:flex h-screen flex-initial'>
